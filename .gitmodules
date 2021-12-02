@@ -1,0 +1,9 @@
+[submodule "fmt"]
+	path = fmt
+	url = https://github.com/fmtlib/fmt.git
+[submodule "scnlib"]
+	path = scnlib
+	url = https://github.com/eliaskosunen/scnlib.git
+[submodule "argparse"]
+	path = argparse
+	url = https://github.com/p-ranav/argparse.git
