@@ -15,26 +15,6 @@ using part1_opt = std::optional<typename Day::answer_one_type>;
 template <bool part2>
 using answer = std::conditional_t<part2, typename Day::answer_two_type, typename Day::answer_one_type>;
 
-template <typename CharT>
-struct scn::scanner<CharT, day02::data> : scn::empty_parser {
-    template <typename Context>
-    error scan(day02::data& val, Context& ctx)
-    {
-      std::string dir;
-      auto r = scn::scan(ctx.range(), "{} {}", dir, val.amount);
-      val.d = [] (char c) {
-        using day02::dir;
-        switch (c) {
-          case 'u': return dir::up;
-          case 'd': return dir::down;
-          default: return dir::forward;
-        }
-      } (dir[0]);
-      ctx.range() = std::move(r.range());
-      return r.error();
-    }
-};
-
 template <>
 parsed_type
 Day::parse(char const* filename) {
