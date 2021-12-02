@@ -70,11 +70,11 @@ struct result {
                 fmt::print(fmt::emphasis::bold, "  Answers:\n");
                 if (answers.part1) {
                     fmt::print("    {:10s} ","Part 1:");
-                    fmt::print(fg(fmt::terminal_color::green), "{:15}\n", answers.part1.value());
+                    fmt::print(fg(fmt::terminal_color::green), "{:16}\n", answers.part1.value());
                 }
                 if (answers.part2) {
                     fmt::print("    {:10s} ","Part 2:");
-                    fmt::print(fg(fmt::terminal_color::green), "{:15}\n", answers.part2.value());
+                    fmt::print(fg(fmt::terminal_color::green), "{:16}\n", answers.part2.value());
                 }
             }
         }, opts.modes);

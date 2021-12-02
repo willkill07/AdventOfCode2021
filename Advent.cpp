@@ -5,8 +5,7 @@
 
 int
 main(int argc, char** argv) {
-    std::locale::global(std::locale("en_US.UTF-8"));
-    
+
     argparse::ArgumentParser program{"advent"};
 
     program.add_argument("--mode")
