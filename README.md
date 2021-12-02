@@ -1,5 +1,7 @@
 # AdventOfCode 2021
 
+[![C/C++ CI](https://github.com/willkill07/AdventOfCode2021/actions/workflows/cmake.yml/badge.svg)](https://github.com/willkill07/AdventOfCode2021/actions/workflows/cmake.yml)
+
 ## Dependencies
 
 - A C++20 compiler with `std::ranges` support (tested with GCC 11)
@@ -23,7 +25,7 @@ cmake -B build -DCMAKE_BUILD_TYPE=Release -G Ninja
 cmake --build build --parallel
 ```
 
-If you don't just use the Makefile generator:
+If you don't, just use the Makefile generator:
 
 ```
 cmake -B build -DCMAKE_BUILD_TYPE=Release
@@ -82,8 +84,11 @@ For example, if you want to benchmark day 5 part 2 10K times and report the aver
 ./build/advent --mode benchmark --ntimes 10000 --day 5 --part 2
 ```
 
-## Leaderboard Statistics
+## Completion Statistics
+
+NOTE: Time is measured in relative time as to when I started, not global time.
 
 | Day | Part 1 Time | Part 1 Rank | Part 2 Time | Part 2 Rank |
 |:---:|:-----------:|:-----------:|:-----------:|:-----------:|
 | 1   | `02:18`     | `842`       | `06:12`     | `1021`      |
+| 2   | `06:44`     | `55080`     | `10:08`     | `51682`     |
