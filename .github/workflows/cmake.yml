@@ -14,14 +14,15 @@ jobs:
     - name: Install GCC
       run: sudo apt install gcc-11 g++-11
 
-    - name: Get Submodules
-      run: git submodule update --init --recursive
-
     - name: Configure
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_COMPILER=gcc-11 -DCMAKE_CXX_COMPILER=g++-11
 
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --parallel
+
+    - name: CTest
+      working-directory: ${{github.workspace}}/build
+      run: ctest -V
 
     - name: Test
       working-directory: ${{github.workspace}}
