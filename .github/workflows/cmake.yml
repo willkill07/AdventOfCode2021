@@ -1,0 +1,53 @@
+name: C/C++ CI
+
+on: [push, pull_request]
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install GCC
+      run: sudo apt install gcc-11 g++-11
+
+    - name: Get Submodules
+      run: git submodule update --init --recursive
+
+    - name: Configure
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_COMPILER=gcc-11 -DCMAKE_CXX_COMPILER=g++-11
+
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --parallel
+
+    - name: Test
+      working-directory: ${{github.workspace}}
+      run: |
+        ./build/advent --help
+        ./build/advent --day 1
+        ./build/advent --day 1 --part 1
+        ./build/advent --day 1 --part 2
+        ./build/advent --day 1 --mode time
+        ./build/advent --day 1 --mode time --part 1
+        ./build/advent --day 1 --mode time --part 2
+        ./build/advent --day 1 --mode benchmark
+        ./build/advent --day 1 --mode benchmark --part 1
+        ./build/advent --day 1 --mode benchmark --part 2
+        ./build/advent --day 1 --mode benchmark --ntimes 2
+        ./build/advent --day 1 --mode benchmark --ntimes 2 --part 1
+        ./build/advent --day 1 --mode benchmark --ntimes 2 --part 2
+
+    - name: Run
+      working-directory: ${{github.workspace}}
+      run: ./build/advent
+
+    - name: Time
+      working-directory: ${{github.workspace}}
+      run: ./build/advent --mode time
+
+    - name: Benchmark
+      working-directory: ${{github.workspace}}
+      run: ./build/advent --mode benchmark --ntimes 100
