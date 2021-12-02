@@ -6,7 +6,7 @@
 
 #include "AdventDays.hpp"
 
-using Day = AdventDay<1, std::vector<int>, int, int>;
+using Day = get_day<1>;
 
 using parsed_type = typename Day::parsed_type;
 using part1_opt = std::optional<typename Day::answer_one_type>;

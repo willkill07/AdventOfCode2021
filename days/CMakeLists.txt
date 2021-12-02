@@ -2,7 +2,8 @@ add_library(days)
 
 target_sources(days
   PRIVATE
-  Day01.cpp)
+  Day01.cpp
+  Day02.cpp)
 
 target_compile_options(days
   PRIVATE
