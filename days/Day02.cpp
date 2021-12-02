@@ -24,23 +24,31 @@ Day::parse(char const* filename) {
   return result;
 }
 
-auto
-update_part1(int x, int y, auto v) {
+struct p1 {
+  int x{0}, y{0};
+};
+
+struct p2 {
+  int x{0}, y{0}, aim{0};
+};
+
+p1
+update(p1 const& s, day02::data const& v) {
   using day02::dir;
   switch (v.d) {
-    case dir::up:   return std::make_tuple(x, y - v.amount);
-    case dir::down: return std::make_tuple(x, y + v.amount);
-    default:        return std::make_tuple(x + v.amount, y);
+    case dir::up:   return { s.x, s.y - v.amount };
+    case dir::down: return { s.x, s.y + v.amount };
+    default:        return { s.x + v.amount, s.y };
   }
 }
 
-auto
-update_part2(long x, long y, long aim, auto v) {
+p2
+update (p2 const& s, day02::data const& v) {
   using day02::dir;
   switch (v.d) {
-    case dir::up:   return std::make_tuple(x, y, aim - v.amount);
-    case dir::down: return std::make_tuple(x, y, aim + v.amount);
-    default:        return std::make_tuple(x + v.amount, y + aim * v.amount, aim);
+    case dir::up:   return { s.x, s.y, s.aim - v.amount };
+    case dir::down: return { s.x, s.y, s.aim + v.amount };
+    default:        return { s.x + v.amount, s.y + s.aim * v.amount, s.aim };
   }
 }
 
@@ -48,16 +56,11 @@ template <>
 template <bool solve_part2>
 answer<solve_part2>
 Day::solve(parsed_type const& data, part1_opt) {
-  using res = std::conditional_t<solve_part2, long, int>;
-  res x{0}, y{0}, aim{0};
-  for (auto cmd : data) {
-    if constexpr (solve_part2) {
-      std::tie(x, y, aim) = update_part2(x, y, aim, cmd);
-    } else {
-      std::tie(x, y) = update_part1(x, y, cmd);
-    }
+  std::conditional_t<solve_part2, p2, p1> state;
+  for (auto const& cmd : data) {
+    state = update(state, cmd);
   }
-  return x * y;
+  return state.x * state.y;
 }
 
 INSTANTIATE(Day, true);
