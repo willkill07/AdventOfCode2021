@@ -8,7 +8,7 @@ add_subdirectory(argparse)
 add_library(advent_common INTERFACE)
 target_compile_features(advent_common INTERFACE cxx_std_20)
 target_include_directories(advent_common INTERFACE "include")
-target_compile_options(advent_common INTERFACE "-Wall" "-Wextra" "-Wpedantic" "-Os")
+target_compile_options(advent_common INTERFACE "-Wall" "-Wextra" "-Wpedantic")
 target_link_libraries(advent_common INTERFACE fmt::fmt scn::scn)
 
 add_subdirectory(days)
