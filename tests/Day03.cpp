@@ -1,7 +1,8 @@
 #include <catch2/catch_all.hpp>
 
 #include "AdventTest.hpp"
-#include "AdventDays.hpp"
+#include "AdventDay.hpp"
+#include "Day03.hpp"
 
 namespace {
 
@@ -19,10 +20,10 @@ char const* input = R"MULTILINE(00100
 01010
 )MULTILINE";
 
-constexpr int day = 3;
 auto const expected_part1 = 198;
 auto const expected_part2 = 230;
-using Day = get_day<day>;
+using Day = AdventDay<day03::id, day03::parsed, day03::result1, day03::result2>;
+constexpr int day = day03::id;
 
 }
 

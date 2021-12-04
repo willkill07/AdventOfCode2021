@@ -3,10 +3,13 @@
 #include <ranges>
 #include <utility>
 #include <vector>
+#include <functional>
 
-#include "AdventDays.hpp"
+#include "AdventDay.hpp"
+#include "Day03.hpp"
+#include "Scanner.hpp"
 
-using Day = get_day<3>;
+using Day = AdventDay<day03::id, day03::parsed, day03::result1, day03::result2>;
 
 using parsed_type = typename Day::parsed_type;
 using part1_opt = std::optional<typename Day::answer_one_type>;
@@ -23,56 +26,66 @@ Day::parse(char const* filename) {
   return result;
 }
 
+auto getter(auto i) {
+  return [i] (auto& v) {
+    return v.data[i];
+  };
+}
+
+auto excluder(auto i, auto target) {
+  return [=] (auto& v) {
+    return target == v.data[i];
+  };
+};
+
+bool majority(auto num, auto total) {
+  return 2 * num >= total;
+}
+
+int to_number(auto& v, auto width) {
+  int result{0};
+  for (decltype(width) i{0}; i < width; ++i) {
+    result |= (v.data[i] << (width - i - 1));
+  }
+  return result;
+};
+
 template <>
 template <bool solve_part2>
 answer<solve_part2>
 Day::solve(parsed_type const& data, part1_opt) {
-  using type = typename parsed_type::value_type::type;
-  type val;
-  for (auto& v : data) {
-    val |= v.data;
-  }
-  unsigned const width = static_cast<unsigned>(val.count());
-  unsigned const total = static_cast<unsigned>(std::size(data));
+  using element = typename parsed_type::value_type;
+  using type = typename element::type;
+
+  auto const total = std::ssize(data);
+  auto const width = [&] {
+    auto mapped = std::ranges::transform_view(data, &element::data);
+    return std::accumulate(mapped.begin(), mapped.end(), type{}, std::bit_or<>{}).count();
+  }();
+
   if constexpr (!solve_part2) {
     int gamma{0};
     int epsilon{0};
     for (unsigned i{0}; i < width; ++i) {
-      unsigned const set = static_cast<unsigned>(std::ranges::count_if(data, [i] (auto& v) { return v.data[i]; }));
-      bool const majority_set = 2 * set > total;
-      bool const minority_set = not majority_set;
-      gamma = (gamma << 1) + +(majority_set);
-      epsilon = (epsilon << 1) + +(minority_set);
+      auto const set = std::ranges::count_if(data, getter(i));
+      bool const on = majority(set, total);
+      gamma = (gamma << 1) + (on);
+      epsilon = (epsilon << 1) + (not on);
     }
     return gamma * epsilon;
   } else {
-    parsed_type O_list {data.begin(), data.end()};
-    parsed_type CO2_list {data.begin(), data.end()};
-
+    parsed_type O2 {data}, CO2 {data};
     for (unsigned i{0}; i < width; ++i) {
-      unsigned const set = static_cast<unsigned>(std::ranges::count_if(O_list, [&] (auto& v) { return v.data[i]; }));
-      bool const majority_set = 2 * set >= std::size(O_list);
-      O_list.remove_if([&] (auto& v) { return majority_set == v.data[i]; });
-      if (std::size(O_list) == 1) {
-        break;
+      if (auto const size = std::ranges::ssize(O2); size > 1) {
+        O2.remove_if(excluder(i, majority(std::ranges::count_if(O2, getter(i)), size)));
       }
     }
     for (unsigned i{0}; i < width; ++i) {
-      unsigned const set = static_cast<unsigned>(std::ranges::count_if(CO2_list, [&] (auto& v) { return v.data[i]; }));
-      bool const majority_set = 2 * set >= std::size(CO2_list);
-      CO2_list.remove_if([&] (auto& v) { return majority_set != v.data[i]; });
-      if (std::size(CO2_list) == 1) {
-        break;
+      if (auto const size = std::ranges::ssize(CO2); size > 1) {
+        CO2.remove_if(excluder(i, not majority(std::ranges::count_if(CO2, getter(i)), size)));
       }
     }
-    auto extract_value = [width] (auto& v) {
-      int result{0};
-      for (unsigned i{0}; i < width; ++i) {
-        result |= (v[i] << (width - i - 1));
-      }
-      return result;
-    };
-    return extract_value(O_list.front().data) * extract_value(CO2_list.front().data);
+    return to_number(O2.front(), width) * to_number(CO2.front(), width);
   }
   return 0;
 }

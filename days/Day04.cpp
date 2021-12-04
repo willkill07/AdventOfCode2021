@@ -1,13 +1,15 @@
 #include <algorithm>
 #include <numeric>
+#include <optional>
 #include <ranges>
 #include <vector>
 #include <unordered_set>
 
-#include "AdventDays.hpp"
+#include "AdventDay.hpp"
 #include "Day04.hpp"
+#include "Scanner.hpp"
 
-using Day = get_day<4>;
+using Day = AdventDay<day04::id, day04::parsed, day04::result1, day04::result2>;
 
 using parsed_type = typename Day::parsed_type;
 using part1_opt = std::optional<typename Day::answer_one_type>;
@@ -61,17 +63,13 @@ check_board(std::vector<board_type>& boards, unsigned bix, int num, std::unorder
   for (unsigned r{0}; r < 5u; ++r) {
     for (unsigned c{0}; c < 5u; ++c) {
       if (num == b[r][c]) {
-        b[r][c] = b[r][c] - 0xFFFF;
+        b[r][c] += 0xdeadbeef; // make a sufficiently small negative number
         if (has_won(b, r, c)) {
           if constexpr (!solve_part2) {
             return score(b) * num;
           } else {
             won.insert(bix);
-            if (std::size(won) == std::size(boards)) {
-              return score(b) * num;
-            } else {
-              return {};
-            }
+            return (std::size(won) == std::size(boards)) ? std::make_optional(score(b) * num) : std::nullopt;
           }
         }
       }

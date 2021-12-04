@@ -8,7 +8,7 @@
 #include <fmt/core.h>
 #include <locale>
 
-#include "AdventDays.hpp"
+#include "Concepts.hpp"
 
 constexpr auto time_symbol = "µs";
 using time_resolution      = std::micro;

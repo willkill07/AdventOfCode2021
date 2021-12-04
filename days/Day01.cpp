@@ -4,9 +4,12 @@
 #include <utility>
 #include <vector>
 
-#include "AdventDays.hpp"
+#include "AdventDay.hpp"
+#include "Day01.hpp"
+#include "Scanner.hpp"
 
-using Day = get_day<1>;
+
+using Day = AdventDay<day01::id, day01::parsed, day01::result1, day01::result2>;
 
 using parsed_type = typename Day::parsed_type;
 using part1_opt = std::optional<typename Day::answer_one_type>;

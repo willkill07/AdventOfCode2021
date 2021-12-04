@@ -1,7 +1,8 @@
 #include <catch2/catch_all.hpp>
 
 #include "AdventTest.hpp"
-#include "AdventDays.hpp"
+#include "AdventDay.hpp"
+#include "Day02.hpp"
 
 namespace {
 
@@ -13,10 +14,10 @@ down 8
 forward 2
 )MULTILINE";
 
-constexpr int day = 2;
 auto const expected_part1 = 150;
 auto const expected_part2 = 900;
-using Day = get_day<day>;
+using Day = AdventDay<day02::id, day02::parsed, day02::result1, day02::result2>;
+constexpr int day = day02::id;
 
 }
 
