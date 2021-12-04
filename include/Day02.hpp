@@ -33,7 +33,7 @@ namespace day02 {
       return r.error();
     }
   };
-
+  
   constexpr const int id = 2;
   using parsed = std::vector<data>;
   using result1 = int;

@@ -7,6 +7,8 @@ target_link_libraries(tests
 target_sources(tests
   PUBLIC
   Day01.cpp
-  Day02.cpp)
+  Day02.cpp
+  Day03.cpp
+  Day04.cpp)
 
 catch_discover_tests(tests EXTRA_ARGS -s)
