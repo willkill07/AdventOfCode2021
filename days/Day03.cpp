@@ -1,10 +1,9 @@
 #include <algorithm>
-#include <bits/ranges_algo.h>
+#include <functional>
 #include <numeric>
 #include <ranges>
 #include <utility>
 #include <vector>
-#include <functional>
 
 #include "AdventDay.hpp"
 #include "Day03.hpp"
