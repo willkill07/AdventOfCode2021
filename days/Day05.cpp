@@ -36,13 +36,12 @@ valid (day05::edge const& e) {
 
 constexpr inline int
 delta_of(int a, int b) {
-  if (a < b) {
-    return 1;
-  } else if (a > b) {
-    return -1;
-  } else {
-    return 0;
-  }
+  return (a < b) ? 1 : ((a == b) ? 0 : -1);
+}
+
+constexpr inline day05::point
+delta_of(day05::point const& a, day05::point const& b) {
+  return { delta_of(a.x, b.x), delta_of(a.y, b.y) };
 }
 
 template <>
@@ -53,13 +52,13 @@ Day::solve(parsed_type const& data, part1_opt) {
   int total{0};
   for (auto&& [src, dst] : data) {
     if (valid<solve_part2>({src, dst})) {
-      day05::point const delta = { delta_of(src.x, dst.x), delta_of(src.y, dst.y) };
+      day05::point const delta = delta_of(src, dst);
       for (auto loc = src; loc != dst; loc += delta) {
-        total += +(++board[loc.y][loc.x] == 2);
+        if (++board[loc.y][loc.x] == 2)
+          ++total;
       }
-      if (board[dst.y][dst.x] < 2) {
-        total += +(++board[dst.y][dst.x] == 2);
-      }
+      if (++board[dst.y][dst.x] == 2)
+        ++total;
     }
   }
   return total;
