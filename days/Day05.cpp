@@ -19,6 +19,11 @@ Day::parse(char const* filename) {
   scn::basic_mapped_file<char> file{filename};
   parsed_type result;
   scn::scan_list(file, result, '\n');
+  for (auto&& e : result) {
+    if (e.dst > e.src) {
+      std::swap(e.src, e.dst);
+    }
+  }
   std::sort(result.begin(), result.end());
   return result;
 }
@@ -47,7 +52,7 @@ template <>
 template <bool solve_part2>
 answer<solve_part2>
 Day::solve(parsed_type const& data, part1_opt) {
-  std::array<std::array<int,1'000>,1'000> board { 0 };
+  std::array<std::array<int,1'000>,1'000> board { {{0}} };
   int total{0};
   for (auto&& [src, dst] : data) {
     if (valid<solve_part2>({src, dst})) {
