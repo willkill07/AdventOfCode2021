@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <functional>
 #include <numeric>
 #include <ranges>
 #include <utility>

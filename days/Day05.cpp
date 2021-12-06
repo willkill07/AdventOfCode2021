@@ -1,7 +1,5 @@
-#include <algorithm>
 #include <array>
 #include <ranges>
-#include <vector>
 
 #include "AdventDay.hpp"
 #include "Day05.hpp"
@@ -21,6 +19,7 @@ Day::parse(char const* filename) {
   scn::basic_mapped_file<char> file{filename};
   parsed_type result;
   scn::scan_list(file, result, '\n');
+  std::sort(result.begin(), result.end());
   return result;
 }
 

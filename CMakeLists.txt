@@ -43,3 +43,10 @@ add_subdirectory(tests)
 add_executable(advent)
 target_sources(advent PRIVATE Advent.cpp)
 target_link_libraries(advent PUBLIC argparse::argparse advent_common days)
+
+add_custom_target(copy-input ALL
+  COMMAND ${CMAKE_COMMAND} -E copy_directory
+  ${CMAKE_SOURCE_DIR}/input
+  ${CMAKE_BINARY_DIR}/input)
+
+add_dependencies(advent copy-input)

@@ -23,6 +23,7 @@ namespace day05 {
 
   struct edge {
     point src, dst;
+    constexpr inline auto operator<=>(edge const&) const = default;
 
     template <typename Context>
     scn::error
