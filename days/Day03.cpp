@@ -8,17 +8,13 @@
 #include "Day03.hpp"
 #include "Scanner.hpp"
 
-using Day = AdventDay<day03::id, day03::parsed, day03::result1, day03::result2>;
-
-using parsed_type = typename Day::parsed_type;
-using part1_opt = std::optional<typename Day::answer_one_type>;
-
-template <bool part2>
-using answer = std::conditional_t<part2, typename Day::answer_two_type, typename Day::answer_one_type>;
+using namespace day03;
+using Day = AdventDay<id, parsed, result1, result2>;
+using opt_answer = Day::opt_answer;
 
 unsigned
-get_width(parsed_type const& all) {
-  auto most_set = std::accumulate(all.begin(), all.end(), parsed_type::value_type{}, std::bit_or<>{});
+get_width(parsed const& all) {
+  auto most_set = std::accumulate(all.begin(), all.end(), parsed::value_type{}, std::bit_or<>{});
   for (unsigned count{1}; true ; ++count) {
     most_set >>= 1;
     if (not most_set.any()) {
@@ -28,9 +24,9 @@ get_width(parsed_type const& all) {
 }
 
 template <>
-parsed_type
-Day::parse(char const* filename) {
-  scn::basic_mapped_file<char> file{filename};
+parsed
+Day::parse(std::string const& filename) {
+  scn::basic_mapped_file<char> file{filename.c_str()};
   std::vector<std::string> result;
   result.reserve(1000);
   scn::scan_list(file, result, '\n');
@@ -71,8 +67,8 @@ int to_number(auto& v, auto width) {
 
 template <>
 template <bool solve_part2>
-answer<solve_part2>
-Day::solve(parsed_type const& data, part1_opt) {
+typename Day::answer<solve_part2>
+Day::solve(parsed const& data, opt_answer) {
 
   auto const total = std::ssize(data);
   auto const width = get_width(data);

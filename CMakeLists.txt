@@ -30,6 +30,11 @@ list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 include(CTest)
 include(Catch)
 
+add_custom_target(copy-input ALL
+  COMMAND ${CMAKE_COMMAND} -E copy_directory
+  ${CMAKE_SOURCE_DIR}/input
+  ${CMAKE_BINARY_DIR}/input)
+
 add_library(advent_common INTERFACE)
 target_compile_features(advent_common INTERFACE cxx_std_20)
 target_include_directories(advent_common INTERFACE "include")
@@ -40,13 +45,4 @@ add_subdirectory(days)
 
 add_subdirectory(tests)
 
-add_executable(advent)
-target_sources(advent PRIVATE Advent.cpp)
-target_link_libraries(advent PUBLIC argparse::argparse advent_common days)
-
-add_custom_target(copy-input ALL
-  COMMAND ${CMAKE_COMMAND} -E copy_directory
-  ${CMAKE_SOURCE_DIR}/input
-  ${CMAKE_BINARY_DIR}/input)
-
-add_dependencies(advent copy-input)
+add_subdirectory(src)

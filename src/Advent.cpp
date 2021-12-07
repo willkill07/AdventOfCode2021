@@ -15,16 +15,16 @@ main(int argc, char** argv) {
     
     program.add_argument("--day")
         .help("day to run (0 for all)")
-        .scan<'d', int>().default_value(0)
+        .scan<'u', unsigned>().default_value(0u)
         .required().nargs(1);
 
     program.add_argument("--part")
-        .scan<'d', int>().default_value(3)
+        .scan<'u', unsigned>().default_value(3u)
         .help("part to run (1, 2, or 3 [for all])")
         .required().nargs(1);
     
     program.add_argument("--ntimes")
-        .scan<'d', int>().default_value(10)
+        .scan<'u', unsigned>().default_value(10u)
         .help("number of times to run (for benchmarking)")
         .required().nargs(1);
 
@@ -37,19 +37,19 @@ main(int argc, char** argv) {
         } else if (mode.compare("time") ==  0) {
             opts.modes = types::Time{};
         } else if (mode.compare("benchmark") == 0) {
-            auto const ntimes = program.get<int>("--ntimes");
+            auto const ntimes = program.get<unsigned>("--ntimes");
             opts.modes = types::Benchmark{ntimes};
         } else {
             throw std::runtime_error{"invalid option specified"};
         }
 
-        if (auto const day = program.get<int>("--day"); day == 0) {
+        if (auto const day = program.get<unsigned>("--day"); day == 0) {
             opts.days = types::All{};
         } else {
             opts.days = types::Day{day};
         }
 
-        if (auto const part = program.get<int>("--part"); part == 1 or part == 2) {
+        if (auto const part = program.get<unsigned>("--part"); part == 1 or part == 2) {
             opts.parts = types::Part{part};
         } else if (part == 3) {
             opts.parts = types::All{};

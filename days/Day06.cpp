@@ -1,27 +1,24 @@
-#include <vector>
+#include <array>
+#include <cctype>
 #include <numeric>
+#include <ranges>
+#include <vector>
 
 #include "AdventDay.hpp"
 #include "Day06.hpp"
 #include "Scanner.hpp"
 
-
-using Day = AdventDay<day06::id, day06::parsed, day06::result1, day06::result2>;
-
-using parsed_type = typename Day::parsed_type;
-using part1_opt = std::optional<typename Day::answer_one_type>;
-
-template <bool part2>
-using answer = std::conditional_t<part2, typename Day::answer_two_type, typename Day::answer_one_type>;
+using namespace day06;
+using Day = AdventDay<id, parsed, result1, result2>;
+using opt_answer = Day::opt_answer;
 
 template <>
-parsed_type
-Day::parse(char const* filename) {
-  scn::basic_mapped_file<char> file{filename};
-  std::vector<unsigned> result;
-  result.reserve(2000);
-  scn::scan_list(file, result, ',');
-  return result;
+parsed
+Day::parse(std::string const& filename) {
+  scn::basic_mapped_file<char> file{filename.c_str()};
+  auto to_num = [] (char c) { return static_cast<unsigned>(c - '0'); };
+  auto vals = file | std::ranges::views::filter(::isdigit) | std::ranges::views::transform(to_num);
+  return { std::ranges::begin(vals), std::ranges::end(vals) };
 }
 
 constexpr const unsigned timer = 7;
@@ -29,12 +26,12 @@ constexpr const unsigned total = timer + 2;
 
 template <>
 template <bool solve_part2>
-answer<solve_part2>
-Day::solve(parsed_type const& data, part1_opt) {
+typename Day::answer<solve_part2>
+Day::solve(parsed const& data, opt_answer) {
 
   constexpr const int days = solve_part2 ? 256 : 80;
 
-  std::vector<unsigned long long> lanternfish (total);
+  std::array<unsigned long long, total> lanternfish {0};
   for (unsigned t : data) {
     ++lanternfish[t];
   }

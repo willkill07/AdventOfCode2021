@@ -24,7 +24,7 @@ tmp_file::append(std::string_view info) {
     out.close();
 }
 
-char const*
+std::string
 tmp_file::name() const {
-    return file.c_str();
+    return file.string();
 }

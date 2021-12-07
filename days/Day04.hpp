@@ -2,9 +2,6 @@
 
 #include <array>
 #include <vector>
-#include <string>
-
-#include <scn/all.h>
 
 namespace day04 {
 
@@ -16,6 +13,9 @@ namespace day04 {
 
   constexpr const int id = 4;
   using parsed = data;
-  using result1 = int;
-  using result2 = int;
+
+  template <bool part2>
+  using answer = int;
+  using result1 = answer<false>;
+  using result2 = answer<true>;
 }

@@ -9,20 +9,16 @@
 #include "Day04.hpp"
 #include "Scanner.hpp"
 
-using Day = AdventDay<day04::id, day04::parsed, day04::result1, day04::result2>;
-
-using parsed_type = typename Day::parsed_type;
-using part1_opt = std::optional<typename Day::answer_one_type>;
-
-template <bool part2>
-using answer = std::conditional_t<part2, typename Day::answer_two_type, typename Day::answer_one_type>;
+using namespace day04;
+using Day = AdventDay<id, parsed, result1, result2>;
+using opt_answer = Day::opt_answer;
 
 using board_type = day04::data::board_type;
 
 template <>
-parsed_type
-Day::parse(char const* filename) {
-  scn::basic_mapped_file<char> file{filename};
+parsed
+Day::parse(std::string const& filename) {
+  scn::basic_mapped_file<char> file{filename.c_str()};
   day04::data result;
   auto r = scn::scan_list_until(file, result.nums, '\n', ',').range();
   scn::ignore_until(r, '\n');
@@ -80,8 +76,8 @@ check_board(std::vector<board_type>& boards, unsigned bix, int num, std::unorder
 
 template <>
 template <bool solve_part2>
-answer<solve_part2>
-Day::solve(parsed_type const& data, part1_opt) {
+typename Day::answer<solve_part2>
+Day::solve(parsed const& data, opt_answer) {
   // important: need to make a copy (to make it mutable)
   auto boards = data.boards;
   std::unordered_set<unsigned> won;

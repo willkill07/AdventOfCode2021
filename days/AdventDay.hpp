@@ -3,6 +3,7 @@
 #include <utility>
 #include <vector>
 #include <string>
+#include <string_view>
 #include <optional>
 
 #include <fmt/core.h>
@@ -12,12 +13,16 @@ using std::string_literals::operator""s;
 
 const std::string input_directory{"./input/"s};
 
-template <int Day, typename ParsedT, typename ResultOneT, typename ResultTwoT = ResultOneT>
+template <int Day, typename ParsedT, typename ResultOneT, typename ResultTwoT>
 struct AdventDay {
-
+  
   using parsed_type = ParsedT;
-  using answer_one_type = ResultOneT;
-  using answer_two_type = ResultTwoT;
+  using part1_answer = ResultOneT;
+  using part2_answer = ResultTwoT;
+  using opt_answer = std::optional<ResultOneT>;
+
+  template <bool solve_part2>
+  using answer = std::conditional_t<solve_part2, ResultTwoT, ResultOneT>;
 
   inline static std::string name() {
     return fmt::format("Day {:02}:", Day);
@@ -29,22 +34,18 @@ struct AdventDay {
 
   static
   parsed_type
-  parse(char const*);
+  parse(std::string const&);
 
   template <bool solve_part2>
   static
-  std::conditional_t<solve_part2, answer_two_type, answer_one_type>
-  solve(parsed_type const&, std::optional<answer_one_type> = std::nullopt);
+  answer<solve_part2>
+  solve(parsed_type const&, opt_answer = std::nullopt);
 };
 
 #define INSTANTIATE(DAY,BOOL) \
 template \
-std::conditional_t< \
-  BOOL, \
-  typename DAY::answer_two_type, \
-  typename DAY::answer_one_type \
-> \
+typename DAY::answer<BOOL> \
 DAY::solve<BOOL>( \
   typename DAY::parsed_type const&, \
-  std::optional<typename DAY::answer_one_type> \
+  typename DAY::opt_answer \
 )

@@ -1,14 +1,14 @@
 #pragma once
 
 #include <bitset>
-#include <list>
-#include <string>
-
-#include <scn/all.h>
+#include <vector>
 
 namespace day03 {
   constexpr const int id = 3;
   using parsed = std::vector<std::bitset<16>>;
-  using result1 = int;
-  using result2 = int;
+
+  template <bool part2>
+  using answer = int;
+  using result1 = answer<false>;
+  using result2 = answer<true>;
 }

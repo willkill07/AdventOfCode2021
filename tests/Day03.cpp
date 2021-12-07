@@ -4,6 +4,8 @@
 #include "AdventDay.hpp"
 #include "Day03.hpp"
 
+using namespace day03;
+
 namespace {
 
 char const* input = R"MULTILINE(00100
@@ -22,15 +24,14 @@ char const* input = R"MULTILINE(00100
 
 auto const expected_part1 = 198;
 auto const expected_part2 = 230;
-using Day = AdventDay<day03::id, day03::parsed, day03::result1, day03::result2>;
-constexpr int day = day03::id;
+using Day = AdventDay<id, parsed, result1, result2>;
 
 }
 
-SCENARIO("2021.day.03","[day03]") {
+SCENARIO("2021.day.03","[2021][03]") {
     GIVEN("Sample input") {
 
-        tmp_file sample{day};
+        tmp_file sample{id};
         sample.append(input);
         auto parsed = Day::parse(sample.name());
 

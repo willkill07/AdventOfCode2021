@@ -1,5 +1,9 @@
 add_library(days)
 
+target_include_directories(days
+  PUBLIC
+  .)
+
 target_sources(days
   PRIVATE
   Day01.cpp

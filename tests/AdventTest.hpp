@@ -7,7 +7,7 @@ struct tmp_file {
   tmp_file(int day);
   ~tmp_file();
   void append(std::string_view info);
-  char const* name() const;
+  std::string name() const;
 
 private:
   std::filesystem::path file;

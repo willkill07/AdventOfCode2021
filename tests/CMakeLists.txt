@@ -1,10 +1,10 @@
-add_executable(tests)
-target_link_libraries(tests
+add_executable(advent_tests)
+target_link_libraries(advent_tests
   PRIVATE
   days
   Catch2::Catch2WithMain)
 
-target_sources(tests
+target_sources(advent_tests
   PRIVATE
   Day01.cpp
   Day02.cpp
@@ -14,4 +14,6 @@ target_sources(tests
   Day06.cpp
   AdventTest.cpp)
 
-catch_discover_tests(tests EXTRA_ARGS -s)
+set_target_properties(advent_tests PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
+
+catch_discover_tests(advent_tests EXTRA_ARGS -s)
