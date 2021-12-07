@@ -44,8 +44,8 @@ struct AdventDay {
 
 #define INSTANTIATE(DAY,BOOL) \
 template \
-typename DAY::answer<BOOL> \
+DAY::answer<BOOL> \
 DAY::solve<BOOL>( \
-  typename DAY::parsed_type const&, \
-  typename DAY::opt_answer \
+  DAY::parsed_type const&, \
+  DAY::opt_answer \
 )

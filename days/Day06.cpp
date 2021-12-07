@@ -13,7 +13,7 @@ using Day = AdventDay<id, parsed, result1, result2>;
 using opt_answer = Day::opt_answer;
 
 template <>
-parsed
+Day::parsed_type
 Day::parse(std::string const& filename) {
   scn::basic_mapped_file<char> file{filename.c_str()};
   auto to_num = [] (char c) { return static_cast<unsigned>(c - '0'); };
@@ -26,8 +26,8 @@ constexpr const unsigned total = timer + 2;
 
 template <>
 template <bool solve_part2>
-typename Day::answer<solve_part2>
-Day::solve(parsed const& data, opt_answer) {
+Day::answer<solve_part2>
+Day::solve(Day::parsed_type const& data, Day::opt_answer) {
 
   constexpr const int days = solve_part2 ? 256 : 80;
 

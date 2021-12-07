@@ -5,15 +5,17 @@
 #include "Day05.hpp"
 #include "Scanner.hpp"
 
-using namespace day05;
-using Day = AdventDay<id, parsed, result1, result2>;
-using opt_answer = Day::opt_answer;
+namespace detail {
+  using namespace day05;
+  using Day = AdventDay<id, parsed, result1, result2>;
+}
+using detail::Day;
 
 template <>
-parsed
+Day::parsed_type
 Day::parse(std::string const& filename) {
   scn::basic_mapped_file<char> file{filename.c_str()};
-  parsed result;
+  Day::parsed_type result;
   scn::scan_list(file, result, '\n');
   for (auto&& e : result) {
     if (e.dst > e.src) {
@@ -46,8 +48,8 @@ delta_of(day05::point const& a, day05::point const& b) {
 
 template <>
 template <bool solve_part2>
-typename Day::answer<solve_part2>
-Day::solve(parsed const& data, opt_answer) {
+Day::answer<solve_part2>
+Day::solve(Day::parsed_type const& data, Day::opt_answer) {
   std::array<std::array<int,1'000>,1'000> board { {{0}} };
   int total{0};
   for (auto&& [src, dst] : data) {

@@ -9,14 +9,16 @@
 #include "Day04.hpp"
 #include "Scanner.hpp"
 
-using namespace day04;
-using Day = AdventDay<id, parsed, result1, result2>;
-using opt_answer = Day::opt_answer;
+namespace detail {
+  using namespace day04;
+  using Day = AdventDay<id, parsed, result1, result2>;
+}
+using detail::Day;
 
 using board_type = day04::data::board_type;
 
 template <>
-parsed
+Day::parsed_type
 Day::parse(std::string const& filename) {
   scn::basic_mapped_file<char> file{filename.c_str()};
   day04::data result;
@@ -39,7 +41,7 @@ Day::parse(std::string const& filename) {
 inline int
 score(board_type const& b) {
   auto vals = std::ranges::join_view(b) | std::ranges::views::filter([] (int v) { return v > 0; });
-  return std::accumulate(vals.begin(), vals.end(), 0);
+  return std::accumulate(std::ranges::begin(vals), std::ranges::end(vals), 0);
 }
 
 inline bool
@@ -76,8 +78,8 @@ check_board(std::vector<board_type>& boards, unsigned bix, int num, std::unorder
 
 template <>
 template <bool solve_part2>
-typename Day::answer<solve_part2>
-Day::solve(parsed const& data, opt_answer) {
+Day::answer<solve_part2>
+Day::solve(Day::parsed_type const& data, Day::opt_answer) {
   // important: need to make a copy (to make it mutable)
   auto boards = data.boards;
   std::unordered_set<unsigned> won;

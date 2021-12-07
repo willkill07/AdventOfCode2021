@@ -6,12 +6,14 @@
 #include "Day02.hpp"
 #include "Scanner.hpp"
 
-using namespace day02;
-using Day = AdventDay<id, parsed, result1, result2>;
-using opt_answer = Day::opt_answer;
+namespace detail {
+  using namespace day02;
+  using Day = AdventDay<id, parsed, result1, result2>;
+}
+using detail::Day;
 
 template <>
-parsed
+Day::parsed_type
 Day::parse(std::string const& filename) {
   scn::basic_mapped_file<char> file{filename.c_str()};
   std::vector<day02::data> result;
@@ -49,8 +51,8 @@ update (p2 const& s, day02::data const& v) {
 
 template <>
 template <bool solve_part2>
-typename Day::answer<solve_part2>
-Day::solve(parsed const& data, opt_answer) {
+Day::answer<solve_part2>
+Day::solve(Day::parsed_type const& data, Day::opt_answer) {
   std::conditional_t<solve_part2, p2, p1> state;
   for (auto const& cmd : data) {
     state = update(state, cmd);

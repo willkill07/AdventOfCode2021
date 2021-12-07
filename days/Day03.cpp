@@ -8,23 +8,14 @@
 #include "Day03.hpp"
 #include "Scanner.hpp"
 
-using namespace day03;
-using Day = AdventDay<id, parsed, result1, result2>;
-using opt_answer = Day::opt_answer;
-
-unsigned
-get_width(parsed const& all) {
-  auto most_set = std::accumulate(all.begin(), all.end(), parsed::value_type{}, std::bit_or<>{});
-  for (unsigned count{1}; true ; ++count) {
-    most_set >>= 1;
-    if (not most_set.any()) {
-      return count;
-    }
-  }
+namespace detail {
+  using namespace day03;
+  using Day = AdventDay<id, parsed, result1, result2>;
 }
+using detail::Day;
 
 template <>
-parsed
+Day::parsed_type
 Day::parse(std::string const& filename) {
   scn::basic_mapped_file<char> file{filename.c_str()};
   std::vector<std::string> result;
@@ -41,23 +32,23 @@ Day::parse(std::string const& filename) {
   return out;
 }
 
-auto getter(auto i) {
+auto getter(std::integral auto i) {
   return [i] (auto& v) {
     return v[i];
   };
 }
 
-auto excluder(auto i, auto target) {
+auto excluder(std::integral auto i, auto target) {
   return [=] (auto& v) {
     return target == v[i];
   };
 };
 
-bool majority(auto num, auto total) {
+bool majority(std::integral auto num, std::integral auto total) {
   return 2 * num >= total;
 }
 
-int to_number(auto& v, auto width) {
+int to_number(auto& v, std::integral auto width) {
   int result{0};
   for (decltype(width) i{0}; i < width; ++i) {
     result |= (v[i] << (width - i - 1));
@@ -65,10 +56,21 @@ int to_number(auto& v, auto width) {
   return result;
 };
 
+inline unsigned
+get_width(Day::parsed_type const& all) {
+  auto most_set = std::accumulate(all.begin(), all.end(), Day::parsed_type::value_type{}, std::bit_or<>{});
+  for (unsigned count{1}; true ; ++count) {
+    most_set >>= 1;
+    if (not most_set.any()) {
+      return count;
+    }
+  }
+}
+
 template <>
 template <bool solve_part2>
-typename Day::answer<solve_part2>
-Day::solve(parsed const& data, opt_answer) {
+Day::answer<solve_part2>
+Day::solve(Day::parsed_type const& data, Day::opt_answer) {
 
   auto const total = std::ssize(data);
   auto const width = get_width(data);
