@@ -1,9 +1,7 @@
 #include <algorithm>
-#include <bits/ranges_algo.h>
 #include <limits>
 #include <numeric>
 #include <ranges>
-#include <utility>
 #include <vector>
 
 #include "AdventDay.hpp"
@@ -28,7 +26,7 @@ template <>
 template <bool solve_part2>
 typename Day::answer<solve_part2>
 Day::solve(parsed const& data, opt_answer) {
-  
+
   auto cost_fn = [] (int loc) {
     return [loc] (int x) {
       if constexpr (int const diff = std::abs(x - loc); solve_part2) {
@@ -44,17 +42,17 @@ Day::solve(parsed const& data, opt_answer) {
     return std::accumulate(std::ranges::begin(deltas), std::ranges::end(deltas), 0);
   };
 
+  // wanted to have a mutable lambda with min local, but that doesn't compile
   int min {std::numeric_limits<int>::max()};
   auto decreasing = [&] (int curr) {
     return (curr == (min = std::min(min, curr)));
   };
 
-  return (
-    std::ranges::views::iota(std::ranges::min(data))
-    | std::ranges::views::transform(get_cost)
-    | std::ranges::views::take_while(decreasing) // find the minimum
-    | std::ranges::views::reverse
-    ).front();
+  return (std::ranges::views::iota(std::ranges::min(data))
+          | std::ranges::views::transform(get_cost)
+          | std::ranges::views::take_while(decreasing)
+          | std::ranges::views::reverse
+         ).front();
 }
 
 INSTANTIATE(Day, true);
