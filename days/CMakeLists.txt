@@ -11,7 +11,8 @@ target_sources(days
   Day03.cpp
   Day04.cpp
   Day05.cpp
-  Day06.cpp)
+  Day06.cpp
+  Day07.cpp)
 
 target_compile_options(days
   PRIVATE
