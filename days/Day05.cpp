@@ -69,34 +69,17 @@ template <>
 template <bool solve_part2>
 Day::answer<solve_part2>
 Day::solve(Day::parsed_type const& data, Day::opt_answer) {
-  std::array<std::array<int,1'000>,1'000> board { {{0}} };
-  int total{0};
+  std::array<std::array<int,1'000>,1'000> board;
+  std::ranges::fill(board[0], 0);
+  std::ranges::fill(board, board[0]);
 
+  int total{0};
   for (auto&& [src, dst] : data) {
     if (valid<solve_part2>({src, dst})) {
       day05::point const delta = delta_of(src, dst);
-      if (src.x == 0) {
-        if (src.y != 0) {
-          // vertical
-          for (auto loc = src; loc != dst; loc.y += delta.y) {
-            if (++board[loc.y][loc.x] == 2)
-              ++total;
-          }
-        }
-      } else {
-        if (src.y != 0) {
-          // diagonal
-          for (auto loc = src; loc != dst; loc += delta) {
-            if (++board[loc.y][loc.x] == 2)
-              ++total;
-          }
-        } else {
-          // horizontal
-          for (auto loc = src; loc != dst; loc.x += delta.x) {
-            if (++board[loc.y][loc.x] == 2)
-              ++total;
-          }
-        }
+      for (auto loc = src; loc != dst; loc += delta) {
+        if (++board[loc.y][loc.x] == 2)
+          ++total;
       }
       if (++board[dst.y][dst.x] == 2)
         ++total;
