@@ -17,8 +17,7 @@ char const* input = R"MULTILINE(0,9 -> 5,9
 0,9 -> 2,9
 3,4 -> 1,4
 0,0 -> 8,8
-5,5 -> 8,2
-)MULTILINE";
+5,5 -> 8,2)MULTILINE";
 
 auto const expected_part1 = 5;
 auto const expected_part2 = 12;
