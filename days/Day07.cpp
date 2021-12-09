@@ -4,9 +4,10 @@
 #include <ranges>
 #include <vector>
 
+#include <scn/all.h>
+
 #include "AdventDay.hpp"
 #include "Day07.hpp"
-#include "Scanner.hpp"
 
 namespace detail {
   using namespace day07;
@@ -20,7 +21,17 @@ Day::parse(std::string const& filename) {
   scn::basic_mapped_file<char> file{filename.c_str()};
   std::vector<int> result;
   result.reserve(1000);
-  scn::scan_list(file, result, ',');
+  int num{0};
+  for (auto&& c : file) {
+    if (::isdigit(c)) {
+      num = 10 * num + (c - '0');
+    } else {
+      result.push_back(std::exchange(num, 0));
+    }
+  }
+  if (num != 0) {
+    result.push_back(num);
+  }
   return result;
 }
 

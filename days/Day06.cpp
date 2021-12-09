@@ -1,48 +1,69 @@
 #include <array>
-#include <cctype>
+#include <algorithm>
 #include <numeric>
 #include <ranges>
 #include <vector>
 
+#include <scn/all.h>
+
 #include "AdventDay.hpp"
 #include "Day06.hpp"
-#include "Scanner.hpp"
 
-using namespace day06;
-using Day = AdventDay<id, parsed, result1, result2>;
-using opt_answer = Day::opt_answer;
+namespace detail {
+  using namespace day06;
+  using Day = AdventDay<id, parsed, result1, result2>;
+}
+using detail::Day;
+
+using day06::matrix;
+using day06::array;
+using day06::is_matrix;
+using day06::is_array;
+using day06::mpow;
 
 template <>
 Day::parsed_type
 Day::parse(std::string const& filename) {
   scn::basic_mapped_file<char> file{filename.c_str()};
   auto to_num = [] (char c) { return static_cast<unsigned>(c - '0'); };
-  auto vals = file | std::ranges::views::filter(::isdigit) | std::ranges::views::transform(to_num);
-  return { std::ranges::begin(vals), std::ranges::end(vals) };
+  auto nums = file | std::ranges::views::filter(::isdigit) | std::ranges::views::transform(to_num);
+  array<9> res;
+  std::ranges::fill(res, 0);
+  for (auto&& num : nums) {
+    ++res[num];
+  }
+  return res;
 }
 
-constexpr const unsigned timer = 7;
-constexpr const unsigned total = timer + 2;
+template <is_matrix Mat, is_array Arr>
+auto
+reduce(Mat&& a, Arr&& b) {
+  typename std::decay_t<Arr>::value_type c{0};
+  for (unsigned i{0}; i < 9; ++i) {
+    for (unsigned k{1}; k < 7; ++k) {
+      c += a[i][k] * b[k];
+    }
+  }
+  return c;
+}
+
+constexpr const matrix<9,9> translation {{
+  { 0,1,0,0,0,0,0,0,0 },
+  { 0,0,1,0,0,0,0,0,0 },
+  { 0,0,0,1,0,0,0,0,0 },
+  { 0,0,0,0,1,0,0,0,0 },
+  { 0,0,0,0,0,1,0,0,0 },
+  { 0,0,0,0,0,0,1,0,0 },
+  { 1,0,0,0,0,0,0,1,0 },
+  { 0,0,0,0,0,0,0,0,1 },
+  { 1,0,0,0,0,0,0,0,0 }
+}};
 
 template <>
 template <bool solve_part2>
 Day::answer<solve_part2>
-Day::solve(Day::parsed_type const& data, Day::opt_answer) {
-
-  constexpr const int days = solve_part2 ? 256 : 80;
-
-  std::array<unsigned long long, total> lanternfish {0};
-  for (unsigned t : data) {
-    ++lanternfish[t];
-  }
-
-  for (unsigned day{1}; day <= days; ++day) {
-    unsigned const idx = (day + timer - 1) % total;
-    unsigned const next_idx = (day + timer + 1) % total;
-    lanternfish[idx] += lanternfish[next_idx];
-  }
-
-	return std::accumulate(std::begin(lanternfish), std::end(lanternfish), 0llu);
+Day::solve(Day::parsed_type const& lanternfish, Day::opt_answer) {
+  return reduce(mpow(translation, solve_part2 ? 256 : 80), lanternfish);
 }
 
 INSTANTIATE(Day, true);

@@ -22,14 +22,6 @@ namespace day05 {
   struct edge {
     point src, dst;
     constexpr inline auto operator<=>(edge const&) const = default;
-
-    template <typename Context>
-    scn::error
-    scan(Context& ctx) {
-      auto r = scn::scan(ctx.range(), "{},{} -> {},{}", src.x, src.y, dst.x, dst.y);
-      ctx.range() = std::move(r.range());
-      return r.error();
-    }
   };
 
   constexpr const int id = 5;

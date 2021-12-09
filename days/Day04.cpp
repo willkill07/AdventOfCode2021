@@ -1,13 +1,15 @@
 #include <algorithm>
+#include <cctype>
 #include <numeric>
 #include <optional>
 #include <ranges>
 #include <vector>
 #include <unordered_set>
 
+#include <scn/all.h>
+
 #include "AdventDay.hpp"
 #include "Day04.hpp"
-#include "Scanner.hpp"
 
 namespace detail {
   using namespace day04;
@@ -15,25 +17,39 @@ namespace detail {
 }
 using detail::Day;
 
-using board_type = day04::data::board_type;
+using day04::board_type;
 
 template <>
 Day::parsed_type
 Day::parse(std::string const& filename) {
   scn::basic_mapped_file<char> file{filename.c_str()};
   day04::data result;
-  auto r = scn::scan_list_until(file, result.nums, '\n', ',').range();
-  scn::ignore_until(r, '\n');
-  scn::ignore_until(r, '\n');
-  while (!r.empty()) {
+  result.nums.reserve(100);
+  result.boards.reserve(100);
+
+  auto i = file.begin();
+  for (; *i != '\n'; ++i) {
+    int num{0};
+    for (; std::isdigit(*i); ++i) {
+      num = 10 * num + (*i - '0');
+    }
+    result.nums.push_back(num);
+  }
+  for (; not std::isdigit(*i); ++i) ;
+  while(i < file.end()) {
     board_type b;
-    for (unsigned long i{0}; i < 5ul; ++i) {
-      auto res = scn::scan(r, "{} {} {} {} {}\n", b[i][0], b[i][1], b[i][2], b[i][3], b[i][4]);
-      r = res.range();
-      scn::ignore_until(r, '\n');
+    for (unsigned long k{0}; k < 5ul; ++k) {
+      for (unsigned long j{0}; j < 5ul; ++j) {
+        int num{0};
+        for (; std::isspace(*i); ++i) ;
+        for (; std::isdigit(*i); ++i) {
+          num = 10 * num + (*i - '0');
+        }
+        b[k][j] = num;
+      }
     }
     result.boards.push_back(b);
-    scn::ignore_until(r, '\n');
+    for (; not std::isdigit(*i); ++i) ;
   }
   return result;
 }
@@ -46,12 +62,8 @@ score(board_type const& b) {
 
 inline bool
 has_won(board_type& b, unsigned r, unsigned c) {
-  bool hor{true}, ver{true};
-  for (std::size_t i{0}; i < 5; ++i) {
-    hor &= (b[r][i] < 0);
-    ver &= (b[i][c] < 0);
-  }
-  return (hor or ver);
+  return ((b[r][0] < 0) and (b[r][1] < 0) and (b[r][2] < 0) and (b[r][3] < 0) and (b[r][4] < 0))
+      or ((b[0][c] < 0) and (b[1][c] < 0) and (b[2][c] < 0) and (b[3][c] < 0) and (b[4][c] < 0));
 }
 
 template <bool solve_part2>

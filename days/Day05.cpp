@@ -1,9 +1,10 @@
 #include <array>
 #include <ranges>
 
+#include <scn/all.h>
+
 #include "AdventDay.hpp"
 #include "Day05.hpp"
-#include "Scanner.hpp"
 
 namespace detail {
   using namespace day05;
@@ -16,11 +17,29 @@ Day::parsed_type
 Day::parse(std::string const& filename) {
   scn::basic_mapped_file<char> file{filename.c_str()};
   Day::parsed_type result;
-  scn::scan_list(file, result, '\n');
-  for (auto&& e : result) {
-    if (e.dst > e.src) {
+
+  auto read_number = [] (auto& itr) {
+    int num{0};
+    while(not std::isdigit(*itr)) {
+      ++itr;
+    }
+    while(std::isdigit(*itr)) {
+      num = 10 * num + (*itr - '0');
+      ++itr;
+    }
+    return num;
+  };
+
+  for (auto i = file.begin(); i < file.end(); ) {
+    day05::edge e;
+    e.src.x = read_number(i);
+    e.src.y = read_number(i);
+    e.dst.x = read_number(i);
+    e.dst.y = read_number(i);
+    if (e.dst < e.src) {
       std::swap(e.src, e.dst);
     }
+    result.push_back(e);
   }
   std::sort(result.begin(), result.end());
   return result;

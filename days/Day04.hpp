@@ -5,8 +5,9 @@
 
 namespace day04 {
 
+  using board_type = std::array<std::array<int, 5>,5>;
+
   struct data {
-    using board_type = std::array<std::array<int, 5>,5>;
     std::vector<int> nums;
     std::vector<board_type> boards;
   };

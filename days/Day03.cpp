@@ -4,9 +4,10 @@
 #include <utility>
 #include <vector>
 
+#include <scn/all.h>
+
 #include "AdventDay.hpp"
 #include "Day03.hpp"
-#include "Scanner.hpp"
 
 namespace detail {
   using namespace day03;
@@ -18,16 +19,18 @@ template <>
 Day::parsed_type
 Day::parse(std::string const& filename) {
   scn::basic_mapped_file<char> file{filename.c_str()};
-  std::vector<std::string> result;
-  result.reserve(1000);
-  scn::scan_list(file, result, '\n');
-  for (auto& v : result) {
-    std::ranges::reverse(v);
-  }
   parsed_type out;
-  out.reserve(std::size(result));
-  for (auto& v : result) {
-    out.push_back(parsed_type::value_type{v});
+  out.reserve(1000);
+  auto end = file.end();
+  for (auto start = file.begin(); start <= end; ) {
+    auto next = std::find_if_not(start, end, ::isdigit);
+    auto rng = std::ranges::subrange(start, next) | std::views::transform([](char i) -> int { return i - '0'; }) | std::views::reverse;
+    unsigned long long num{0};
+    for (int&& i : rng) {
+      num = num << 1 | i;
+    }
+    out.push_back(parsed_type::value_type(num));
+    start = next + 1;
   }
   return out;
 }

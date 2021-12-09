@@ -1,10 +1,12 @@
+#include <cctype>
 #include <ranges>
 #include <utility>
 #include <vector>
 
+#include <scn/all.h>
+
 #include "AdventDay.hpp"
 #include "Day02.hpp"
-#include "Scanner.hpp"
 
 namespace detail {
   using namespace day02;
@@ -17,7 +19,22 @@ Day::parsed_type
 Day::parse(std::string const& filename) {
   scn::basic_mapped_file<char> file{filename.c_str()};
   std::vector<day02::data> result;
-  scn::scan_list(file, result, '\n');
+  for (auto i = file.begin(); i != file.end(); ++i) {
+    day02::data tmp;
+    switch (*i) {
+      case 'f': tmp.d = day02::dir::forward; break;
+      case 'u': tmp.d = day02::dir::up; break;
+      case 'd': tmp.d = day02::dir::down; break;
+      default: return result;
+    }
+    while (!::isspace(*i++));
+    int num{0};
+    while (::isdigit(*i)) {
+      num = 10 * num + (*i++ - '0');
+    }
+    tmp.amount = num;
+    result.push_back(tmp);
+  }
   return result;
 }
 
