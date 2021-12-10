@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <bits/ranges_algo.h>
 #include <bitset>
 #include <cctype>
 #include <limits>
@@ -68,9 +69,9 @@ Day::solve(Day::parsed_type const& data, Day::opt_answer) {
       }
     }
     
-    std::ranges::sort(basin_sizes);
-    auto rng = basin_sizes | std::views::reverse | std::views::take(3) | std::views::common;
-    return std::accumulate(std::ranges::begin(rng), std::ranges::end(rng), 1, std::multiplies<>{});
+    auto last_three = std::prev(std::end(basin_sizes), 3);
+    std::ranges::nth_element(basin_sizes, last_three);
+    return std::accumulate(last_three, std::end(basin_sizes), 1, std::multiplies<>{});
   }
   return 0;
 }
