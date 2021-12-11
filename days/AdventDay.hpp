@@ -25,7 +25,7 @@ struct AdventDay {
   using answer = std::conditional_t<solve_part2, ResultTwoT, ResultOneT>;
 
   inline static std::string name() {
-    return fmt::format("Day {:02}:", Day);
+    return fmt::format("Day {:02}", Day);
   }
 
   inline static std::string input_file() {

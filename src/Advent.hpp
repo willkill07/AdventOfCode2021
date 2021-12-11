@@ -66,6 +66,7 @@ namespace detail {
   void
   run(types::options const& opts) {
     run_impl<Day>(opts).print(opts);
+    fmt::print("\n");
   }
 
   template <advent_day Day>
@@ -101,6 +102,7 @@ namespace detail {
       }) / ntimes;
     }
     res.print(opts);
+    fmt::print("\n");
     return res.times;
   }
 
@@ -131,6 +133,57 @@ namespace detail {
 
 void
 invoke(types::options const& opts) {
+  auto sep = [&] {
+    fmt::print("+{:-^11}+","");if (not std::holds_alternative<types::Benchmark>(opts.modes)) {
+      if (std::holds_alternative<types::All>(opts.parts) or std::get<types::Part>(opts.parts).part == 1) {
+        fmt::print("{:-^17}+","");
+      }
+      if (std::holds_alternative<types::All>(opts.parts) or std::get<types::Part>(opts.parts).part == 2) {
+        fmt::print("{:-^17}+","");
+      }
+    }
+    if (not std::holds_alternative<types::Run>(opts.modes)) {
+      fmt::print("{:-^14}+","");
+      if (std::holds_alternative<types::All>(opts.parts) or std::get<types::Part>(opts.parts).part == 1) {
+        fmt::print("{:-^14}+","");
+      }
+      if (std::holds_alternative<types::All>(opts.parts) or std::get<types::Part>(opts.parts).part == 2) {
+        fmt::print("{:-^14}+","");
+      }
+      fmt::print("{:-^14}+","");
+    }
+    fmt::print("\n");
+  };
+
+  sep();
+
+  fmt::print("| ");
+  fmt::print(fg(fmt::terminal_color::bright_green), "Ao");
+  fmt::print(fg(fmt::terminal_color::yellow) | fmt::emphasis::bold, "C++20");
+  fmt::print(fg(fmt::terminal_color::bright_green), "21");
+  fmt::print(" |");
+  if (not std::holds_alternative<types::Benchmark>(opts.modes)) {
+    if (std::holds_alternative<types::All>(opts.parts) or std::get<types::Part>(opts.parts).part == 1) {
+      fmt::print(" {:^15} |","Part 1 Answer");
+    }
+    if (std::holds_alternative<types::All>(opts.parts) or std::get<types::Part>(opts.parts).part == 2) {
+      fmt::print(" {:^15} |","Part 2 Answer");
+    }
+  }
+  if (not std::holds_alternative<types::Run>(opts.modes)) {
+    fmt::print(" {:^12} |","Parsing");
+    if (std::holds_alternative<types::All>(opts.parts) or std::get<types::Part>(opts.parts).part == 1) {
+      fmt::print(" {:^12} |","Part 1");
+    }
+    if (std::holds_alternative<types::All>(opts.parts) or std::get<types::Part>(opts.parts).part == 2) {
+      fmt::print(" {:^12} |","Part 2");
+    }
+    fmt::print(" {:^12} |","Total");
+  }
+  fmt::print("\n");
+
+  sep();
+
   std::visit(Overload{
     [&] (types::Day const& day) {
       if (std::size_t(day.day) > std::tuple_size_v<ALL_ADVENT_DAYS>) {
@@ -152,8 +205,14 @@ invoke(types::options const& opts) {
               detail::for_each_day([&] <std::size_t Day> (detail::Const<Day>) constexpr {
                 total += detail::all_benchmarks[Day](opts);
               });
-              fmt::print(fg(fmt::terminal_color::bright_green) | fmt::emphasis::bold, "{}\n", "Summary:");
+
+              sep();
+
+              fmt::print("| ");
+              fmt::print(fg(fmt::terminal_color::bright_green) | fmt::emphasis::bold, "{:9}", "Summary");
+              fmt::print(" |");
               total.print();
+              fmt::print("\n");
             },
             [&](auto) {
               detail::for_each_day([&] <std::size_t Day> (detail::Const<Day>) constexpr {
@@ -164,4 +223,6 @@ invoke(types::options const& opts) {
           opts.modes);
     }
   }, opts.days);
+
+  sep();
 }

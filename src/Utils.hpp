@@ -77,22 +77,21 @@ struct timings {
 
   inline void
   print() const {
-    fmt::print(fmt::emphasis::bold, "  Times:\n");
-    fmt::print("    {:10s} ", "Parsing:");
-    fmt::print(fg(fmt::terminal_color::blue), "{:13.3Lf} {}\n", parse, time_symbol);
+    fmt::print(fg(fmt::terminal_color::blue), "{:10.3Lf} {}", parse, time_symbol);
+    fmt::print(" |");
     double total = parse;
     if (part1) {
-      fmt::print("    {:10s} ", "Part 1:");
-      fmt::print(fg(fmt::terminal_color::blue), "{:13.3Lf} {}\n", part1.value(), time_symbol);
+      fmt::print(fg(fmt::terminal_color::blue), "{:10.3Lf} {}", part1.value(), time_symbol);
+      fmt::print(" |");
       total += part1.value();
     }
     if (part2) {
-      fmt::print("    {:10s} ", "Part 2:");
-      fmt::print(fg(fmt::terminal_color::blue), "{:13.3Lf} {}\n", part2.value(), time_symbol);
+      fmt::print(fg(fmt::terminal_color::blue), "{:10.3Lf} {}", part2.value(), time_symbol);
+      fmt::print(" |");
       total += part2.value();
     }
-    fmt::print("    {:10s} ", "Total:");
-    fmt::print(fg(fmt::terminal_color::blue), "{:13.3Lf} {}\n", total, time_symbol);
+    fmt::print(fg(fmt::terminal_color::blue), "{:10.3Lf} {}", total, time_symbol);
+    fmt::print(" |");
   }
 };
 
@@ -103,14 +102,13 @@ struct answers {
   
   inline void
   print() const {
-    fmt::print(fmt::emphasis::bold, "  Answers:\n");
     if (part1) {
-      fmt::print("    {:10s} ", "Part 1:");
-      fmt::print(fg(fmt::terminal_color::green), "{:16}\n", part1.value());
+      fmt::print(fg(fmt::terminal_color::green), "{:16}", part1.value());
+      fmt::print(" |");
     }
     if (part2) {
-      fmt::print("    {:10s} ", "Part 2:");
-      fmt::print(fg(fmt::terminal_color::green), "{:16}\n", part2.value());
+      fmt::print(fg(fmt::terminal_color::green), "{:16}", part2.value());
+      fmt::print(" |");
     }
   }
 };
@@ -122,7 +120,9 @@ struct result {
 
   inline void
   print(types::options const& opts) const {
-    fmt::print(fg(fmt::terminal_color::bright_red) | fmt::emphasis::bold, "{}\n", Day::name());
+    fmt::print("| ");
+    fmt::print(fg(fmt::terminal_color::bright_red) | fmt::emphasis::bold, "{:9}", Day::name());
+    fmt::print(" |");
     std::visit(
       Overload{
         [&](types::Benchmark) { },
