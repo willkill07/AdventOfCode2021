@@ -51,7 +51,7 @@ start-RW)MULTILINE"
 };
 
 std::array const expected_part1 = { 10u, 19u, 226u };
-std::array const expected_part2 = { 36u, 109u, 3509u };
+std::array const expected_part2 = { 36u, 103u, 3509u };
 using Day = AdventDay<id, parsed, result1, result2>;
 
 }
