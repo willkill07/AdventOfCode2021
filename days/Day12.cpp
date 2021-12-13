@@ -66,10 +66,8 @@ day12::graph::graph(std::vector<std::pair<std::string_view, std::string_view>> c
     } else {
       for (auto&& v : alist) {
         for (auto&& w : alist) {
-          if (v != w) {
-            if (v != end and w != start) {
-              ++adjmat[v * small_count + w];
-            }
+          if (v != end and w != start) {
+            ++adjmat[v * small_count + w];
           }
         }
       }
