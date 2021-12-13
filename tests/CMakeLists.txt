@@ -17,6 +17,8 @@ target_sources(advent_tests
   Day09.cpp
   Day10.cpp
   Day11.cpp
+  Day12.cpp
+  Day13.cpp
   AdventTest.cpp)
 
 set_target_properties(advent_tests PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")

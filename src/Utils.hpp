@@ -103,11 +103,11 @@ struct answers {
   inline void
   print() const {
     if (part1) {
-      fmt::print(fg(fmt::terminal_color::green), "{:16}", part1.value());
+      fmt::print(fg(fmt::terminal_color::green), "{:>16}", part1.value());
       fmt::print(" |");
     }
     if (part2) {
-      fmt::print(fg(fmt::terminal_color::green), "{:16}", part2.value());
+      fmt::print(fg(fmt::terminal_color::green), "{:>16}", part2.value());
       fmt::print(" |");
     }
   }
@@ -121,7 +121,7 @@ struct result {
   inline void
   print(types::options const& opts) const {
     fmt::print("| ");
-    fmt::print(fg(fmt::terminal_color::bright_red) | fmt::emphasis::bold, "{:9}", Day::name());
+    fmt::print(fg(fmt::terminal_color::bright_red) | fmt::emphasis::bold, "{:^9}", Day::name());
     fmt::print(" |");
     std::visit(
       Overload{

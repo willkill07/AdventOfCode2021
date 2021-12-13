@@ -209,7 +209,7 @@ invoke(types::options const& opts) {
               sep();
 
               fmt::print("| ");
-              fmt::print(fg(fmt::terminal_color::bright_green) | fmt::emphasis::bold, "{:9}", "Summary");
+              fmt::print(fg(fmt::terminal_color::bright_green) | fmt::emphasis::bold, "{:^9}", "Summary");
               fmt::print(" |");
               total.print();
               fmt::print("\n");
