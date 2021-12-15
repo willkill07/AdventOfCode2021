@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <ranges>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <scn/all.h>
