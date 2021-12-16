@@ -36,7 +36,7 @@ SCENARIO("2021.day.02","[2021][02]") {
             }
         }
 
-        WHEN("Running Part 2") {
+        AND_WHEN("Running Part 2") {
             auto actual = Day::solve<true>(parsed);
             THEN("We get the correct answer") {
                 REQUIRE(actual == expected_part2);

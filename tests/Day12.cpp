@@ -70,7 +70,7 @@ SCENARIO("2021.day.12","[2021][12]") {
             }
         }
 
-        WHEN("Running Part 2") {
+        AND_WHEN("Running Part 2") {
             auto actual = Day::solve<true>(parsed);
             THEN("We get the correct answer") {
                 REQUIRE(actual == expected_part2[0]);
@@ -91,7 +91,7 @@ SCENARIO("2021.day.12","[2021][12]") {
             }
         }
 
-        WHEN("Running Part 2") {
+        AND_WHEN("Running Part 2") {
             auto actual = Day::solve<true>(parsed);
             THEN("We get the correct answer") {
                 REQUIRE(actual == expected_part2[1]);
@@ -112,7 +112,7 @@ SCENARIO("2021.day.12","[2021][12]") {
             }
         }
 
-        WHEN("Running Part 2") {
+        AND_WHEN("Running Part 2") {
             auto actual = Day::solve<true>(parsed);
             THEN("We get the correct answer") {
                 REQUIRE(actual == expected_part2[2]);
