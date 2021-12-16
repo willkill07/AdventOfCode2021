@@ -70,21 +70,31 @@ Day::parsed_type
 Day::parse(std::string const& filename) {
   
   scn::basic_mapped_file<char> file{filename.c_str()};
-  auto rng = file
-    | std::views::transform ([] (char c) {
-        // map the character to a hex value [0, 16)
-        auto const val = static_cast<std::uint8_t>(c - (std::isdigit(c) ?  '0' : ('A' - 10)));
-        // each hex digit is four bits, so map to an array
-        return std::array { (val & 0b1000) >> 3, (val & 0b0100) >> 2, (val & 0b0010) >> 1, val & 0b0001 };
-      })
-      // join the arrays together as one range
-    | std::views::join
-      // get a common iterator that can be used with non-range stuff
-    | std::views::common;
 
-  // map the range to a single vector of bits
-  auto bits = std::vector<std::uint8_t>(std::ranges::begin(rng), std::ranges::end(rng));
-  
+  auto bit_mapper = [] (std::uint8_t val) {
+    // each hex digit is four bits, so map to an array
+    return std::array {
+      static_cast<std::uint8_t>((val & 0b1000) >> 3),
+      static_cast<std::uint8_t>((val & 0b0100) >> 2),
+      static_cast<std::uint8_t>((val & 0b0010) >> 1),
+      static_cast<std::uint8_t>((val & 0b0001) >> 0)
+    };
+  };
+
+  auto char_to_hex = [] (char c) {
+    // map the character to a hex value [0, 16)
+    return static_cast<std::uint8_t>(c - (std::isdigit(c) ?  '0' : ('A' - 10)));
+  };
+
+  std::vector<std::uint8_t> bits;
+  bits.reserve(std::size(file) * 4);
+  // create a bit sequence
+  for (auto&& block : file | std::views::transform (char_to_hex) | std::views::transform (bit_mapper)) {
+    for (auto&& bit : block) {
+      bits.push_back(bit);
+    }
+  }
+
   // parse away!
   auto [result, _] = recursive_parse(std::ranges::begin(bits));
   return result;
