@@ -1,6 +1,6 @@
+#include <iterator>
 #include <numeric>
 #include <ranges>
-#include <variant>
 
 #include <scn/all.h>
 
@@ -13,161 +13,98 @@ namespace detail {
 }
 using detail::Day;
 
-template <typename Iter>
-std::pair<Iter, day18::SnailNumber>
-recursive_parse(Iter iter) {    
-  if (char const c = *iter++; c == '[') {
-    auto [i, lhs] = recursive_parse(iter);
-    ++i; // skip ,
-    auto [j, rhs] = recursive_parse(i);
-    ++j; // skip ]
-    return { j, new day18::Snail{lhs, rhs} };
-  } else {
-    return { iter, int{c - '0'} };
+day18::SnailNumber
+extract(auto iter, auto end) {
+  day18::SnailNumber o;
+  o.reserve(50);
+  int level{0};
+  for (auto i = iter; i != end; ++i) {
+    char c = *i;
+    if (c == '[') {
+      level++;
+    } else if (c == ']') {
+      level--;
+    } else if (c != ',') {
+      o.push_back({c - '0', level});
+    }
   }
+  return o;
 }
 
 namespace {
 
-struct Printer {
-  void
-  operator()(day18::Snail* s) const {
-    fmt::print("[");
-    std::visit(*this, s->left);
-    fmt::print(",");
-    std::visit(*this, s->right);
-    fmt::print("]");
-  }
-  void
-  operator()(int v) const {
-    fmt::print("{}", v);
-  }
-
-  ~Printer() {
-    fmt::print("\n");
-  }
-};
-
-struct Splitter {
-
-  std::pair<bool, day18::SnailNumber> 
-  operator()(day18::Snail* s) const {
-    if (auto [did_split_lhs, lhs] = std::visit(*this, s->left); did_split_lhs) {
-      s->left = lhs;
-      return { true, s };
-    } else if (auto [did_split_rhs, rhs] = std::visit(*this, s->right); did_split_rhs) {
-      s->right = rhs;
-      return { true, s };
-    } else {
-      return { false, s };
-    }
-  }
-
-  std::pair<bool, day18::SnailNumber>
-  operator()(int v) const {
-    if (v >= 10) {
-      return { true, new day18::Snail{v / 2, (v + 1) / 2} };
-    } else {
-      return { false, v };
-    }
-  }
-};
-
-struct Exploder {
-
-  void reset() {
-    level = 0;
-  }
-
-  std::tuple<bool, day18::SnailNumber, int, int>
-  operator()(day18::Snail* s) {
-    if (level < 4) {
-      ++level;
-      if (auto [exploded_left, new_left, left_val1, right_val1] = std::visit(*this, s->left); exploded_left) {
-        --level;
-        s->left = new_left;
-        s->right = add_to_left(s->right, right_val1);
-        return { true, s, left_val1, 0 };
-      } else if (auto [exploded_right, new_right, left_val2, right_val2] = std::visit(*this, s->right); exploded_right) {
-        --level;
-        s->right = new_right;
-        s->left = add_to_right(s->left, left_val2);
-        return { true, s , 0, right_val2 };
-      } else {
-        --level;
-        return { false, s, 0, 0 };
+bool
+explode(day18::SnailNumber& p){
+  auto end_minus_one = std::prev(std::end(p));
+  for(auto it = std::begin(p); it != end_minus_one; ++it){
+    auto n = std::next(it);
+    auto [v1, d1] = *it;
+    if(d1 > 4 && d1 == n->second){
+      if (it != std::begin(p)) {
+        std::prev(it)->first += v1;
       }
-    } else {
-      return { true, 0, std::get<int>(s->left), std::get<int>(s->right) };
-    }
-  }
-
-  std::tuple<bool, day18::SnailNumber, int, int>
-  operator()(int& v) {
-    return { false, v, 0, 0 };
-  }
-
-private:
-  int level{0};
-
-  day18::SnailNumber
-  add_to_left(day18::SnailNumber& num, int const num_to_add) const {
-    if (std::holds_alternative<int>(num)) {
-      return { std::get<int>(num) + num_to_add };
-    } else {
-      auto* n = std::get<day18::Snail*>(num);
-      n->left = add_to_left(n->left, num_to_add);
-      return num;
-    }
-  }
-
-  day18::SnailNumber
-  add_to_right(day18::SnailNumber& num, int const num_to_add) const {
-    if (std::holds_alternative<int>(num)) {
-      return std::get<int>(num) + num_to_add;
-    } else {
-      auto* n = std::get<day18::Snail*>(num);
-      n->right = add_to_right(n->right, num_to_add);
-      return num;
-    }
-  }
-};
-
-struct Magnitude {
-
-  int
-  operator()(day18::Snail* s) const {
-    return std::visit(*this, s->left) * 3 + std::visit(*this, s->right) * 2;
-  }
-
-  int
-  operator()(int v) const {
-    return v;
-  }
-};
-
-day18::SnailNumber
-reduce (day18::SnailNumber n) {
-  day18::Copier c;
-  Exploder e;
-  Splitter s;
-  n = std::visit(c, n);
-  while (true) {
-    e.reset();
-    auto [exploded, num, l, r] = std::visit(e, n);
-    if (not exploded) {
-      auto [splitted, new_num] = std::visit(s, num);
-      if (not splitted) {
-        return num;
+      auto [v2, d2] = *n;
+      if (auto nn = std::next(n); nn != std::end(p)) {
+        nn->first += v2;
       }
-      n = new_num;
+      it = p.erase(it);
+      *it = { 0, d2 - 1 };
+      return true;
     }
   }
+  return false;
+}
+
+bool
+split(day18::SnailNumber& p){
+  for(auto it = std::begin(p); it != std::end(p); ++it){
+    if (auto& [v, d] = *it; v >= 10) {
+      int const half = v / 2;
+      ++d;
+      v -= half;
+      p.insert(it, { half, d });
+      return true;
+    }
+  }
+  return false;
 }
 
 day18::SnailNumber
-add (day18::SnailNumber a, day18::SnailNumber b) {
-  return reduce(new day18::Snail { a, b });
+reduce(day18::SnailNumber& p) {
+  while (true) {
+    if (not explode(p) and not split(p)) {
+      break;
+    }
+  }
+  return p;
+}
+
+day18::SnailNumber
+add(day18::SnailNumber a, day18::SnailNumber const& b){
+  a.reserve(std::size(a) + std::size(b));
+  a.insert(std::end(a), std::begin(b), std::end(b));
+  for(auto& [k, v]: a) {
+    v++;
+  }
+  return reduce(a);
+}
+
+int
+magnitude (day18::SnailNumber l) {
+  while (std::next(std::begin(l)) != std::end(l)) {
+    for (auto it = std::begin(l); std::next(it) != std::end(l); ++it){
+      auto& [v1, d1] = *it;
+      auto n = std::next(it);
+      auto [v2, d2] = *n;
+      if (d1 == d2){
+        v1 = 3 * v1 + 2 * v2;
+        --d1;
+        l.erase(n);
+        break;
+      }
+    }
+  }
+  return std::begin(l)->first;
 }
 
 } // end anonymous namespace
@@ -177,11 +114,11 @@ Day::parsed_type
 Day::parse(std::string const& filename) {
   scn::basic_mapped_file<char> file{filename.c_str()};
   Day::parsed_type result;
-  result.nums.reserve(100);
+  result.reserve(100);
   for (auto iter = std::begin(file); iter < std::end(file); ) {
-    auto [new_iter, snail] = recursive_parse(iter);
-    iter = new_iter + 1;
-    result.nums.push_back(snail);
+    auto end = std::find(iter, std::end(file), '\n');
+    result.push_back(extract(iter, end));
+    iter = std::next(end);
   }
   return result;
 }
@@ -191,30 +128,20 @@ template <bool solve_part2>
 Day::answer<solve_part2>
 Day::solve(Day::parsed_type const& data, Day::opt_answer) {
 
-  if constexpr(solve_part2) {
+  if constexpr (solve_part2) {
     int max{std::numeric_limits<int>::min()};
-    for (unsigned i{0}; auto& a : data.nums) {
-      for (unsigned j{0}; auto& b : data.nums) {
-        if (i != j) {
-          auto c = add(a, b);
-          max = std::max({max, std::visit(Magnitude{}, c)});
-          //std::visit(day18::Deleter{}, c);
-        }
-        ++j;
+    for (unsigned i{0}; auto&& u : data) {
+      for (auto&& v : data | std::views::drop(i + 1)) {
+        max = std::max({max, magnitude(add(u, v)), magnitude(add(v, u)) });
       }
-      ++i;
     }
     return max;
   } else {
-    auto all_but_first = data.nums | std::views::drop(1) | std::views::common;
-    auto first = data.nums.front();
-    auto result = std::accumulate(std::ranges::begin(all_but_first), std::ranges::end(all_but_first), first, add);
-    int magnitude = std::visit(Magnitude{}, result);
-    std::visit(day18::Deleter{}, result);
-    return magnitude;
+    auto first = data.front();
+    auto rest = data | std::views::drop(1) | std::views::common;
+    return magnitude(std::accumulate(std::ranges::begin(rest), std::ranges::end(rest), first, add));
   }
 
-  return 0;
 }
 
 INSTANTIATE(Day, true);
