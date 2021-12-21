@@ -130,9 +130,12 @@ Day::solve(Day::parsed_type const& data, Day::opt_answer) {
 
   if constexpr (solve_part2) {
     int max{std::numeric_limits<int>::min()};
-    for (unsigned i{0}; auto&& u : data) {
-      for (auto&& v : data | std::views::drop(i + 1)) {
-        max = std::max({max, magnitude(add(u, v)), magnitude(add(v, u)) });
+    #pragma omp parallel for reduction(max:max)
+    for (unsigned i = 0u; i < std::size(data); ++i) {
+      for (unsigned j = 0u; j < std::size(data); ++j) {
+        if (i != j) {
+          max = std::max({max, magnitude(add(data[i], data[j]))});
+        }
       }
     }
     return max;

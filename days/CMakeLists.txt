@@ -1,5 +1,7 @@
 add_library(days)
 
+find_package(OpenMP REQUIRED)
+
 target_include_directories(days
   PUBLIC
   .)
@@ -23,7 +25,9 @@ target_sources(days
   Day15.cpp
   Day16.cpp
   Day17.cpp
-  Day18.cpp)
+  Day18.cpp
+  Day19.cpp
+  Day20.cpp)
 
 target_compile_options(days
   PRIVATE
@@ -37,4 +41,4 @@ target_compile_options(days
   "-Wshadow=local"
   "-Wshadow=global")
 
-target_link_libraries(days PUBLIC advent_common)
+target_link_libraries(days PUBLIC advent_common OpenMP::OpenMP_CXX)
