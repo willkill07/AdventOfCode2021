@@ -25,6 +25,7 @@
 #include "Day19.hpp"
 #include "Day20.hpp"
 #include "Day21.hpp"
+#include "Day22.hpp"
 
 using ALL_ADVENT_DAYS = std::tuple<
   AdventDay<day01::id, day01::parsed, day01::result1, day01::result2>,
@@ -47,5 +48,6 @@ using ALL_ADVENT_DAYS = std::tuple<
   AdventDay<day18::id, day18::parsed, day18::result1, day18::result2>,
   AdventDay<day19::id, day19::parsed, day19::result1, day19::result2>,
   AdventDay<day20::id, day20::parsed, day20::result1, day20::result2>,
-  AdventDay<day21::id, day21::parsed, day21::result1, day21::result2>
+  AdventDay<day21::id, day21::parsed, day21::result1, day21::result2>,
+  AdventDay<day22::id, day22::parsed, day22::result1, day22::result2>
 >;
